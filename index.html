@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LinkGuard – Download-Link-Prüfer</title>
+<style>
+:root{--bg:#0b0f17;--s1:#121926;--s2:#182133;--bd:#243049;--tx:#e6ebf5;--mu:#8895b0;--ac:#6ea8ff;--ok:#3fd6a0;--in:#6ea8ff;--wa:#f5b942;--cr:#ff6b6b;--vc:var(--ok);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 18px 60px}
+header{display:flex;gap:14px;align-items:center;margin-bottom:22px}
+.logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(145deg,#1d2b47,#13203a);border:1px solid var(--bd);display:grid;place-items:center;font-size:24px}
+h1{font-size:24px;margin:0;letter-spacing:-.01em}header p{margin:2px 0 0;color:var(--mu);font-size:14px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--bd)}
+.tab{background:none;border:0;color:var(--mu);padding:10px 14px;font:inherit;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--tx);border-color:var(--ac)}
+.panel{display:none}.panel.on{display:block}
+.box{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+label.l{display:block;font-weight:600;margin-bottom:8px}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;background:var(--bg);border:1px solid var(--bd);border-radius:8px;color:var(--tx);padding:12px 14px;font:14px ui-monospace,Menlo,Consolas,monospace}
+input:focus-visible,button:focus-visible,.drop:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.btn{background:var(--ac);color:#071226;border:0;border-radius:8px;padding:0 20px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:var(--s2);color:var(--tx);border:1px solid var(--bd);padding:8px 14px;font-weight:500;font-size:14px}
+.chips{margin-top:12px;color:var(--mu);font-size:13px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:99px;padding:3px 11px;font:inherit;font-size:13px;cursor:pointer}
+.verdict{display:flex;gap:18px;align-items:center;border-left:4px solid var(--vc)}
+.ring{--p:0;width:92px;height:92px;border-radius:50%;flex:none;background:conic-gradient(var(--vc) calc(var(--p)*1%),var(--s2) 0);display:grid;place-items:center}
+.ring b{width:72px;height:72px;border-radius:50%;background:var(--s1);display:grid;place-items:center;font-size:24px}
+.verdict h2{margin:0;font-size:20px;color:var(--vc)}.verdict p{margin:4px 0 0;color:var(--mu)}
+.anat{font:15px/2.1 ui-monospace,Menlo,Consolas,monospace;word-break:break-all;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 14px}
+.anat span{border-bottom:3px solid var(--c);padding-bottom:1px}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--mu)}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:5px}
+.cnt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cnt div{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;font-size:14px}
+h3{font-size:16px;margin:22px 0 10px}
+.f{background:var(--s1);border:1px solid var(--bd);border-left:4px solid var(--c);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.f strong{display:block}.f p{margin:4px 0 0;color:#b6c0d6;font-size:14px}
+code,.v{font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border-radius:6px;padding:1px 6px;word-break:break-all}
+.v{display:inline-block;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:7px 8px;border-bottom:1px solid var(--bd);vertical-align:top}td:first-child{color:var(--mu);width:34%}td:last-child{word-break:break-all}
+ul.rec{margin:0;padding-left:20px;color:#b6c0d6}ul.rec li{margin:4px 0}
+.drop{display:block;border:2px dashed var(--bd);border-radius:12px;padding:30px 16px;text-align:center;color:var(--mu);cursor:pointer}
+.drop.hot{border-color:var(--ac);color:var(--tx)}
+.note{color:var(--mu);font-size:13px;margin-top:20px}
+.hs{display:flex;gap:8px;align-items:flex-start;margin:8px 0}.hs>div{flex:1;min-width:0}
+.hs small{color:var(--mu)}
+@media(max-width:560px){.verdict{flex-direction:column;align-items:flex-start}.row{flex-direction:column}.btn{padding:12px}}
+</style></head><body><div class="wrap">
+<header><div class="logo">🛡️</div><div><h1>LinkGuard</h1><p>Download-Links auf Manipulation prüfen. Läuft komplett lokal, es werden keine Daten gesendet.</p></div></header>
+<nav class="tabs"><button class="tab on" data-t="p1">Link prüfen</button><button class="tab" data-t="p2">Datei prüfen</button></nav>
+
+<section id="p1" class="panel on">
+<div class="box"><label class="l" for="u">Download-Link einfügen</label>
+<div class="row"><input id="u" type="text" placeholder="https://beispiel.de/setup.exe" autocomplete="off" spellcheck="false"><button class="btn" id="go">Prüfen</button></div>
+<div class="chips">Beispiele:
+<button class="chip" data-u="https://github.com/obsproject/obs-studio/releases/download/30.1.2/OBS-Studio-30.1.2-Windows-Installer.exe">Offizieller Download</button>
+<button class="chip" data-u="http://paypa1-secure-login.xyz/Rechnung.pdf.exe">Gefälschte Rechnung</button>
+<button class="chip" data-u="https://xn--pple-43d.com/download?url=http://185.12.4.9/setup.exe">Lookalike-Domain</button></div></div>
+<div id="rep"></div></section>
+
+<section id="p2" class="panel">
+<div class="box"><label class="l" for="exp">Erwarteter Hash (von der Herstellerseite)</label>
+<input id="exp" type="text" placeholder="SHA-256, SHA-1 oder SHA-512 einfügen" autocomplete="off" spellcheck="false" style="width:100%">
+<div id="cmp" style="margin-top:10px"></div></div>
+<label class="drop" id="dz" tabindex="0">Heruntergeladene Datei hierher ziehen oder klicken<input id="fi" type="file" hidden></label>
+<div id="frep" style="margin-top:14px"></div></section>
+
+<p class="note">Die Prüfung ist eine statische Analyse der Link-Struktur ohne Reputationsdatenbank. Sie erkennt typische Täuschungsmuster, kann aber keine Sicherheit garantieren. Bei Zweifeln den Download über die offizielle Seite des Herstellers neu starten.</p>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SEV={crit:{n:'Kritisch',c:'var(--cr)',w:40},warn:{n:'Warnung',c:'var(--wa)',w:15},info:{n:'Hinweis',c:'var(--in)',w:3},ok:{n:'In Ordnung',c:'var(--ok)',w:0}};
+const S=(a)=>new Set(a.split(' '));
+const RISKTLD=S('zip mov xyz top click work tk ml ga cf gq icu cyou buzz rest monster sbs cfd country stream download loan men review win bid link surf lol quest');
+const SHORT=S('bit.ly tinyurl.com t.co goo.gl ow.ly is.gd buff.ly rebrand.ly cutt.ly shorturl.at tiny.cc rb.gy t.ly v.gd s.id');
+const HOSTING=['github.io','pages.dev','vercel.app','netlify.app','web.app','firebaseapp.com','workers.dev','herokuapp.com','blogspot.com','weebly.com','wixsite.com','duckdns.org','ngrok.io','ngrok-free.app','000webhostapp.com','glitch.me','repl.co','r2.dev','s3.amazonaws.com','azurewebsites.net','cloudfront.net'];
+const FILEHOST=S('cdn.discordapp.com transfer.sh pastebin.com file.io anonfiles.com gofile.io mediafire.com mega.nz');
+const SLD=S('co.uk org.uk ac.uk gov.uk com.au net.au org.au co.jp co.nz com.br com.tr co.in co.za com.cn com.mx co.kr com.ar');
+const EXE=S('exe scr bat cmd com pif vbs vbe js jse wsf wsh ps1 hta lnk cpl msp jar reg dll sys');
+const INST=S('msi apk dmg pkg iso img appx msix deb rpm sh run appimage');
+const MACRO=S('docm xlsm pptm dotm xlam');
+const ARCH=S('zip rar 7z ace gz tar tgz cab');
+const DOCX=S('pdf doc docx xls xlsx ppt pptx jpg jpeg png gif txt mp3 mp4 rtf csv');
+const BR={google:['google.com','google.de','gstatic.com','googleapis.com','googleusercontent.com'],microsoft:['microsoft.com','live.com','office.com','windows.com','windowsupdate.com','office365.com','microsoftonline.com','visualstudio.com'],apple:['apple.com','icloud.com'],paypal:['paypal.com','paypal.me'],amazon:['amazon.com','amazon.de','media-amazon.com'],github:['github.com','githubusercontent.com'],dropbox:['dropbox.com'],adobe:['adobe.com'],mozilla:['mozilla.org','mozilla.net','firefox.com'],firefox:['mozilla.org','firefox.com'],steam:['steampowered.com','steamcommunity.com','steamstatic.com'],discord:['discord.com','discord.gg','discordapp.com','discordapp.net'],telegram:['telegram.org','t.me'],whatsapp:['whatsapp.com','whatsapp.net'],zoom:['zoom.us'],nvidia:['nvidia.com','nvidia.de'],intel:['intel.com'],videolan:['videolan.org'],python:['python.org','pypi.org'],nodejs:['nodejs.org'],ubuntu:['ubuntu.com','canonical.com'],debian:['debian.org'],winrar:['rarlab.com','win-rar.com'],ccleaner:['ccleaner.com','piriform.com'],spotify:['spotify.com','scdn.co'],netflix:['netflix.com','nflxvideo.net'],facebook:['facebook.com','fbcdn.net'],instagram:['instagram.com','cdninstagram.com'],dhl:['dhl.de','dhl.com'],sparkasse:['sparkasse.de'],telekom:['telekom.de','telekom.com'],vodafone:['vodafone.de','vodafone.com'],ebay:['ebay.com','ebay.de'],docker:['docker.com','docker.io'],anydesk:['anydesk.com'],teamviewer:['teamviewer.com'],filezilla:['filezilla-project.org'],blender:['blender.org'],libreoffice:['libreoffice.org'],malwarebytes:['malwarebytes.com'],avast:['avast.com'],kaspersky:['kaspersky.com','kaspersky.de'],epicgames:['epicgames.com'],roblox:['roblox.com','rbxcdn.com'],minecraft:['minecraft.net','mojang.com']};
+const HG={'а':'a','е':'e','о':'o','р':'p','с':'c','х':'x','у':'y','і':'i','ѕ':'s','ј':'j','ԁ':'d','ο':'o','α':'a','ν':'v','ι':'i','ɡ':'g','ӏ':'l'};
+
+function puny(inp){const B=36,tMin=1,tMax=26,skew=38,damp=700;let n=128,i=0,bias=72,out=[];let b=inp.lastIndexOf('-');if(b<0)b=0;for(let j=0;j<b;j++)out.push(inp.charCodeAt(j));
+ const ad=(d,np,f)=>{let k=0;d=f?Math.floor(d/damp):d>>1;d+=Math.floor(d/np);for(;d>((B-tMin)*tMax)>>1;k+=B)d=Math.floor(d/(B-tMin));return Math.floor(k+(B-tMin+1)*d/(d+skew))};
+ for(let x=b>0?b+1:0;x<inp.length;){const oi=i;for(let w=1,k=B;;k+=B){const c=inp.charCodeAt(x++);const dg=c-48<10?c-22:c-65<26?c-65:c-97<26?c-97:B;i+=dg*w;const t=k<=bias?tMin:k>=bias+tMax?tMax:k-bias;if(dg<t)break;w*=B-t}
+ const len=out.length+1;bias=ad(i-oi,len,oi===0);n+=Math.floor(i/len);i%=len;out.splice(i++,0,n)}return String.fromCodePoint(...out)}
+const toUni=h=>h.split('.').map(l=>{if(!l.startsWith('xn--'))return l;try{return puny(l.slice(4))}catch{return l}}).join('.');
+const skel=s=>s.replace(/[^\x00-\x7f]/g,c=>HG[c]||c);
+const leet=s=>s.replace(/0/g,'o').replace(/[1|]/g,'l').replace(/3/g,'e').replace(/5/g,'s').replace(/rn/g,'m').replace(/vv/g,'w');
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+function reg(h){const p=h.split('.');if(p.length<=2)return h;const l2=p.slice(-2).join('.');if(SLD.has(l2))return p.slice(-3).join('.');for(const x of HOSTING)if(h.endsWith('.'+x))return p.slice(-x.split('.').length-1).join('.');return l2}
+const ent=s=>{const m={};for(const c of s)m[c]=(m[c]||0)+1;return -Object.values(m).reduce((a,v)=>a+v/s.length*Math.log2(v/s.length),0)};
+const dec=s=>{try{return decodeURIComponent(s)}catch{return s}};
+
+function analyze(raw){
+ let inp=raw.trim();if(!inp)return null;
+ const F=[],P=[],add=(s,t,d,v)=>F.push({s,t,d,v});let note='';
+ if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(inp)&&!/^(data|javascript|blob|mailto|file):/i.test(inp)){inp='https://'+inp;note='Kein Protokoll angegeben, https:// wurde ergänzt.'}
+ let u;try{u=new URL(inp)}catch{return{err:'Das ist keine gültige Adresse. Bitte den kompletten Link einfügen, z. B. https://beispiel.de/datei.zip'}}
+ if(/\s/.test(inp))add('warn','Leerzeichen im Link','Echte Download-Links enthalten keine Leerzeichen. Beim Kopieren wurde evtl. Text angehängt oder der Link wurde manipuliert.');
+ const pr=u.protocol.replace(':','');
+ if(pr==='https')P.push('HTTPS-Verschlüsselung');
+ else if(pr==='http')add('warn','Unverschlüsselte Verbindung (HTTP)','Bei HTTP kann jeder im Netzwerk den Download unterwegs austauschen (Man-in-the-Middle). Seriöse Anbieter nutzen HTTPS.');
+ else if(pr==='ftp')add('warn','FTP-Verbindung','FTP ist unverschlüsselt und bietet keinen Schutz vor Manipulation auf dem Übertragungsweg.');
+ else add('crit','Ungewöhnliches Protokoll „'+pr+':“','Das ist kein normaler Download-Link. Protokolle wie data:, javascript: oder file: werden für Angriffe und Verschleierung genutzt.');
+ const h=u.hostname.replace(/^\[|\]$/g,'');const uni=toUni(h);
+ const rd=reg(h),labels=h.split('.'),tld=labels[labels.length-1];
+ if(u.username||u.password)add('crit','Täuschung mit @ im Link','Alles vor dem @ wird vom Browser ignoriert. Der Link sieht aus wie eine bekannte Seite, führt aber zu „'+h+'“.',decodeURIComponent(u.username+(u.password?':'+u.password:''))+'@');else P.push('Keine @-Täuschung');
+ const hostRaw=(inp.match(/^[a-z+.-]+:\/\/(?:[^\/@?#]*@)?([^\/?#:]*)/i)||[])[1]||'';
+ if(/^\d{1,3}(\.\d{1,3}){3}$/.test(h)){
+  const priv=/^(10\.|127\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h);
+  if(!/^\d{1,3}(\.\d{1,3}){3}$/.test(hostRaw))add('crit','Verschleierte IP-Adresse','Die Adresse wurde als Dezimal- oder Hex-Zahl getarnt. Der Browser rechnet sie zu '+h+' um. Das nutzen Angreifer, um Filter und Betrachter zu täuschen.',hostRaw);
+  else add(priv?'info':'crit',priv?'Adresse im lokalen Netz':'Download direkt von einer IP-Adresse',priv?'Der Link zeigt auf ein Gerät im eigenen Netzwerk. Das ist nur bei selbst betriebenen Servern normal.':'Seriöse Anbieter nutzen einen Domainnamen. Direkte IP-Links sind typisch für Malware-Server und wechselnde Angriffsinfrastruktur.',h)}
+ else if(u.hostname.startsWith('['))add('warn','IPv6-Adresse als Host','Seriöse Downloads laufen über Domainnamen, nicht über rohe IPv6-Adressen.',u.hostname);
+ else P.push('Kein IP-Host');
+ const hasP=labels.some(l=>l.startsWith('xn--'));
+ if(hasP){const mixed=/[a-z]/i.test(uni)&&/[\u0370-\u03ff\u0400-\u04ff\u0530-\u058f]/.test(uni);
+  add(mixed?'crit':'warn',mixed?'Gemischte Schriftsysteme (Homograph-Angriff)':'Internationalisierte Domain (Punycode)',mixed?'Der Name mischt lateinische mit kyrillischen/griechischen Zeichen, die identisch aussehen. So werden bekannte Marken täuschend echt nachgebaut.':'Die Domain enthält Sonderzeichen. Das ist legitim möglich, wird aber für Fälschungen genutzt.','Angezeigt als: '+uni+'  |  Technisch: '+h)}else P.push('Nur normale Zeichen im Domainnamen');
+ if(SHORT.has(rd))add('warn','Link-Verkürzer','Das eigentliche Ziel ist nicht erkennbar und kann jederzeit geändert werden. Verkürzte Links vor dem Öffnen auflösen lassen.',rd);
+ if(FILEHOST.has(h)||FILEHOST.has(rd))add('warn','Anonymer Filehoster','Dieser Dienst erlaubt Uploads durch jedermann und wird oft zur Verbreitung von Schadsoftware missbraucht. Offizielle Software liegt selten dort.',h);
+ const hp=HOSTING.find(x=>h===x||h.endsWith('.'+x));
+ if(hp)add('info','Frei registrierbare Subdomain','Auf „'+hp+'“ kann jeder eigene Seiten anlegen. Der Name davor sagt nichts über die Vertrauenswürdigkeit.',h);
+ if(RISKTLD.has(tld))add('warn','Häufig missbrauchte Endung „.'+tld+'“','Diese Domainendung ist billig oder kostenlos und taucht überdurchschnittlich oft in Phishing und Malware-Kampagnen auf.',h);
+ const subs=h.length>rd.length?h.slice(0,-rd.length-1).split('.').length:0;
+ if(subs>=4)add('warn','Sehr viele Subdomains ('+subs+')','Lange Subdomain-Ketten verstecken die echte Domain am Ende. Entscheidend ist immer der Teil direkt vor der Endung: '+rd+'.',h);
+ // Marken
+ const sk=leet(skel(uni)),toks=sk.split('.').slice(0,-1).join('.').split(/[.\-_]/).filter(Boolean);
+ const cl=leet(skel(toUni(rd.split('.')[0]))),off=Object.keys(BR).find(b=>BR[b].some(d=>rd===d||h.endsWith('.'+d)));
+ if(off)add('ok','Offizielle Domain von „'+off+'“','Die Domain '+rd+' gehört nachweislich zu diesem Anbieter. Das beweist nicht, dass die Datei selbst unverändert ist: Hash-Vergleich nutzen.');
+ else{let hit=null;
+  for(const b in BR){if(b.length<4)continue;
+   for(const t of toks){if(t===b){hit={b,k:'enthält'};break}if(t.length>=5&&Math.abs(t.length-b.length)<=1&&lev(t,b)<=(b.length>=7?2:1)){hit={b,k:'ähnelt',t};break}}
+   if(!hit&&b.length>=5&&cl.length>b.length+2&&cl.startsWith(b))hit={b,k:'beginnt mit'};if(hit)break}
+  if(hit)add(hit.k==='ähnelt'&&hit.b.length<6?'warn':'crit','Mögliche Markenimitation: „'+hit.b+'“','Der Host '+hit.k+' den Markennamen „'+hit.b+'“ (evtl. mit vertauschten Zeichen wie 1/l oder 0/o), gehört aber nicht zur offiziellen Domain des Anbieters. Typisch für Phishing und gefälschte Download-Seiten.','Tatsächliche Domain: '+rd);
+  else P.push('Keine Markenimitation erkannt')}
+ // Entropie
+ const lab=rd.split('.')[0];if(lab.length>=10&&!hp){const v=(lab.match(/[aeiou]/g)||[]).length/lab.length;if(ent(lab)>3.3&&(v<.25||/\d{3}/.test(lab)))add('warn','Zufällig wirkender Domainname','Der Name sieht maschinell erzeugt aus. Solche Domains dienen oft als Wegwerf-Adressen für Angriffe.',lab)}
+ if((h.match(/-/g)||[]).length>=3)add('info','Viele Bindestriche im Host','Lange, zusammengesetzte Domainnamen sind bei Fälschungen häufiger als bei offiziellen Seiten.',h);
+ const hk=h+u.pathname;
+ if(/crack|keygen|patch(ed)?\b|activator|nulled|warez|serial|torrent|free-?download|full-?version|repack/i.test(hk))add('warn','Schlagwörter aus dem Raubkopie-Umfeld','Cracks, Keygens und „Free Download“-Seiten sind der häufigste Verbreitungsweg für Schadsoftware.',(hk.match(/crack|keygen|patch(ed)?|activator|nulled|warez|serial|torrent|free-?download|full-?version|repack/i)||[''])[0]);
+ if(!off&&/login|signin|verify|secure|account|support|wallet|confirm|billing|invoice|rechnung|mahnung|update/i.test(h))add('info','Phishing-typische Wörter im Hostnamen','Begriffe wie „secure“, „login“ oder „verify“ im Domainnamen sollen Vertrauen erzeugen.',h);
+ if(u.port&&!['80','443'].includes(u.port))add('warn','Nicht-Standard-Port :'+u.port,'Ungewöhnliche Ports werden für selbst betriebene oder kurzlebige Server genutzt, selten von großen Anbietern.');else P.push('Standard-Port');
+ // Pfad / Datei
+ const path=dec(u.pathname);
+ if(/[\u202e\u200b-\u200f\u2066-\u2069]/.test(dec(u.href)))add('crit','Unsichtbare Steuerzeichen','Der Link enthält Unicode-Zeichen, die Text umkehren oder verstecken (z. B. RLO). Damit lässt sich eine Dateiendung optisch vertauschen.');
+ if(/%2e%2e|%2f|%5c|%00|\.\.\//i.test(u.pathname))add('warn','Pfad-Tricks erkannt','Kodierte Schrägstriche, ../ oder Nullbytes dienen dazu, Filter zu umgehen oder auf fremde Verzeichnisse zuzugreifen.',u.pathname);
+ if(hostRaw.includes('%'))add('warn','Prozent-Kodierung im Hostnamen','Der Hostname wurde kodiert geschrieben. Das ist bei normalen Links nicht nötig und dient der Verschleierung.',hostRaw);
+ if(inp.includes('\\'))add('warn','Backslash im Link','Browser wandeln \\ in / um. Das wird genutzt, um Prüfungen zu täuschen.');
+ if(/%25[0-9a-f]{2}/i.test(inp))add('warn','Doppelt kodierte Zeichen','Mehrfache Kodierung (%25..) umgeht Sicherheitsfilter und ist bei normalen Links unüblich.');
+ if(inp.length>250)add('info','Sehr langer Link ('+inp.length+' Zeichen)','Lange Links können Ziel und Parameter verstecken.');
+ const seg=path.split('/').filter(Boolean),fn=seg[seg.length-1]||'';
+ let name=/\.[a-z0-9]{1,6}$/i.test(fn)?fn:'';
+ if(!name)for(const [,v] of u.searchParams)if(/^[^\/\\]+\.[a-z0-9]{2,6}$/i.test(v)){name=v;break}
+ let ext='';
+ if(name){const p=name.toLowerCase().split('.');ext=p.length>1?p[p.length-1]:'';const prev=p[p.length-2];
+  if(p.length>=3&&DOCX.has(prev)&&(EXE.has(ext)||INST.has(ext)))add('crit','Doppelte Dateiendung „.'+prev+'.'+ext+'“','Die Datei tarnt sich als harmloses Dokument, ist aber ein Programm. Das ist die klassische Masche bei gefälschten Rechnungen und Bewerbungen.',name);
+  else if(EXE.has(ext))add('warn','Skript oder ausführbarer Dateityp .'+ext,'Dieser Typ führt beim Öffnen sofort Code aus und wird kaum für legitime Downloads verwendet.',name);
+  else if(MACRO.has(ext))add('warn','Office-Datei mit Makros (.'+ext+')','Makros sind ein häufiger Infektionsweg. Nur öffnen, wenn du die Datei erwartest, und Makros deaktiviert lassen.',name);
+  else if(INST.has(ext)||ext==='exe')add('info','Installationsdatei (.'+ext+')','Programme und Installer sollten nur von der offiziellen Herstellerseite stammen. Nach dem Download Hash und digitale Signatur prüfen.',name);
+  else if(ARCH.has(ext))add('info','Archivdatei (.'+ext+')','Archive können beliebige Dateien enthalten und umgehen manche Virenscanner, wenn sie passwortgeschützt sind.',name)}
+ else add('info','Link zeigt nicht direkt auf eine Datei','Es gibt keinen erkennbaren Dateinamen. Das Ziel kann eine Weiterleitung oder eine Download-Seite sein, die erst beim Aufruf entscheidet, was geladen wird.');
+ const params=[...u.searchParams];
+ const redir=params.filter(([k,v])=>/^https?:\/\//i.test(v)||/^\/\/[^\/]/.test(v));
+ if(redir.length)add('warn','Weiterleitung im Link-Parameter','Der Parameter „'+redir[0][0]+'“ enthält eine weitere Adresse. Offene Weiterleitungen leiten über eine vertrauenswürdige Seite zu einem fremden Ziel.',redir[0][0]+'='+redir[0][1]);else P.push('Keine Weiterleitungs-Parameter');
+ const b64=params.find(([,v])=>/^[A-Za-z0-9+\/_=-]{40,}$/.test(v));
+ if(b64)add('info','Langer kodierter Parameter','Der Wert von „'+b64[0]+'“ sieht nach Base64 oder einem Token aus. Das kann Tracking sein, aber auch ein verstecktes Ziel.',b64[1].slice(0,80)+(b64[1].length>80?'…':''));
+ if(P.length)F.push({s:'ok',t:'Bestandene Prüfungen ('+P.length+')',d:P.join(', ')+'.'});
+ const order=['crit','warn','info','ok'];F.sort((a,b)=>order.indexOf(a.s)-order.indexOf(b.s));
+ const score=Math.min(100,F.reduce((a,f)=>a+SEV[f.s].w,0));
+ const V=score>=70?{k:'var(--cr)',t:'Hohes Risiko',d:'Diesen Link nicht öffnen und nichts herunterladen.',i:'⛔'}:score>=40?{k:'var(--cr)',t:'Verdächtig',d:'Mehrere deutliche Warnzeichen. Nur über die offizielle Seite des Anbieters laden.',i:'⚠️'}:score>=15?{k:'var(--wa)',t:'Leichte Auffälligkeiten',d:'Nichts Eindeutiges, aber vor dem Start Quelle und Hash prüfen.',i:'🔎'}:{k:'var(--ok)',t:'Keine Auffälligkeiten',d:'Die Link-Struktur wirkt unauffällig. Prüfe trotzdem den Hash der fertigen Datei.',i:'✅'};
+ // Zerlegung
+ const m=inp.match(/^([a-z][a-z0-9+.-]*:\/\/)([^\/?#]*@)?([^\/?#:]*|\[[^\]]*\])(:\d+)?([^?#]*)(\?[^#]*)?(#.*)?$/i);
+ const parts=m?[[m[1],'var(--mu)','Protokoll'],[m[2],'var(--cr)','Zugangsdaten'],[m[3],'var(--ac)','Host'],[m[4],'var(--wa)','Port'],[m[5],'var(--ok)','Pfad'],[m[6],'#c58bff','Parameter'],[m[7],'var(--mu)','Anker']].filter(x=>x[0]):[[inp,'var(--mu)','Link']];
+ const rows=[['Protokoll',pr],['Host',h+(uni!==h?'  (angezeigt: '+uni+')':'')],['Registrierte Domain',rd],['Subdomain',h.length>rd.length?h.slice(0,-rd.length-1):'–'],['Endung','.'+tld],['Port',u.port||'Standard'],['Pfad',path||'/'],['Dateiname',name||'–'],['Parameter',params.length?params.map(([k,v])=>k+'='+(v.length>50?v.slice(0,50)+'…':v)).join('\n'):'–'],['Länge',inp.length+' Zeichen']];
+ return{F,score,V,parts,rows,note,url:inp};
+}
+
+function render(R){
+ if(R.err)return `<div class="box f" style="--c:var(--cr)"><strong>Link nicht lesbar</strong><p>${esc(R.err)}</p></div>`;
+ const c={};R.F.forEach(f=>c[f.s]=(c[f.s]||0)+1);
+ const rec=R.score>=40?['Link nicht anklicken und nicht weitergeben.','Die Software direkt über die offizielle Herstellerseite suchen, nicht über Suchanzeigen oder Mails.','Falls bereits geladen: Datei nicht ausführen und im Tab „Datei prüfen“ mit dem Hash des Herstellers vergleichen.','Verdächtige Links beim Absender oder bei der Verbraucherzentrale melden.']:['Hash der heruntergeladenen Datei mit der Angabe des Herstellers vergleichen (Tab „Datei prüfen“).','Bei Programmen die digitale Signatur prüfen (Rechtsklick, Eigenschaften, Digitale Signaturen).','Datei zusätzlich bei virustotal.com hochladen, wenn du unsicher bist.','Installer immer nur aus der offiziellen Quelle laden.'];
+ return `<div class="box verdict" style="--vc:${R.V.k}"><div class="ring" style="--p:${Math.max(R.score,4)}"><b>${R.V.i}</b></div><div><h2>${R.V.t}</h2><p>${R.V.d}</p><p>Risikowert ${R.score} von 100</p></div></div>
+ ${R.note?`<p class="note" style="margin:0 0 12px">${esc(R.note)}</p>`:''}
+ <div class="box"><strong>So wurde der Link zerlegt</strong><div class="anat" style="margin-top:10px">${R.parts.map(p=>`<span style="--c:${p[1]}">${esc(p[0])}</span>`).join('')}</div><div class="leg">${R.parts.map(p=>`<span style="--c:${p[1]}"><i></i>${p[2]}</span>`).join('')}</div></div>
+ <div class="cnt">${['crit','warn','info','ok'].map(k=>`<div style="color:${SEV[k].c}"><b>${c[k]||0}</b> ${SEV[k].n}</div>`).join('')}</div>
+ <h3>Ergebnisse im Detail</h3>${R.F.map(f=>`<div class="f" style="--c:${SEV[f.s].c}"><strong>${esc(f.t)}</strong><p>${esc(f.d)}</p>${f.v?`<span class="v">${esc(f.v)}</span>`:''}</div>`).join('')}
+ <h3>Aufbau des Links</h3><div class="box"><table>${R.rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1]).replace(/\n/g,'<br>')}</td></tr>`).join('')}</table></div>
+ <h3>Empfehlung</h3><div class="box"><ul class="rec">${rec.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ <button class="btn sec" id="cp">Bericht kopieren</button>`;
+}
+function txt(R){return `LinkGuard-Bericht\nLink: ${R.url}\nErgebnis: ${R.V.t} (Risikowert ${R.score}/100)\n${R.V.d}\n\n`+R.F.map(f=>`[${SEV[f.s].n}] ${f.t}\n  ${f.d}${f.v?'\n  Wert: '+f.v:''}`).join('\n\n')+'\n\nAufbau:\n'+R.rows.map(r=>`${r[0]}: ${r[1]}`).join('\n')}
+async function copy(t,b){try{await navigator.clipboard.writeText(t)}catch{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch{}a.remove()}const o=b.textContent;b.textContent='Kopiert ✓';setTimeout(()=>b.textContent=o,1500)}
+function run(){const R=analyze($('#u').value);$('#rep').innerHTML=R?render(R):'<div class="box f" style="--c:var(--in)"><strong>Noch kein Link eingegeben</strong><p>Füge oben die komplette Download-Adresse ein.</p></div>';const b=$('#cp');if(b)b.onclick=()=>copy(txt(R),b);if(R)$('#rep').scrollIntoView({behavior:'smooth',block:'start'})}
+$('#go').onclick=run;$('#u').addEventListener('keydown',e=>{if(e.key==='Enter')run()});
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('#u').value=b.dataset.u;run()});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.t).classList.add('on')});
+
+// Datei-Prüfung
+let HS=null;
+const MG=[[[0x4d,0x5a],'Windows-Programm (EXE/DLL)','exe'],[[0x7f,0x45,0x4c,0x46],'Linux-Programm (ELF)','exe'],[[0xcf,0xfa,0xed,0xfe],'macOS-Programm (Mach-O)','exe'],[[0x50,0x4b,3,4],'ZIP-Container (ZIP, Office, JAR, APK)','zip'],[[0x25,0x50,0x44,0x46],'PDF-Dokument','pdf'],[[0x52,0x61,0x72,0x21],'RAR-Archiv','rar'],[[0x37,0x7a,0xbc,0xaf],'7-Zip-Archiv','7z'],[[0x89,0x50,0x4e,0x47],'PNG-Bild','png'],[[0xff,0xd8,0xff],'JPEG-Bild','jpg'],[[0x47,0x49,0x46,0x38],'GIF-Bild','gif'],[[0xd0,0xcf,0x11,0xe0],'OLE-Container (MSI, altes Office)','ole'],[[0x23,0x21],'Skript (Shebang)','script']];
+const EXP={pdf:['pdf'],png:['png'],jpg:['jpg'],jpeg:['jpg'],gif:['gif'],zip:['zip'],docx:['zip'],xlsx:['zip'],pptx:['zip'],jar:['zip'],apk:['zip'],rar:['rar'],'7z':['7z'],exe:['exe'],dll:['exe'],doc:['ole'],xls:['ole'],msi:['ole']};
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const fmt=n=>n>1048576?(n/1048576).toFixed(1)+' MB':n>1024?(n/1024).toFixed(1)+' KB':n+' Bytes';
+async function doFile(f){
+ const o=$('#frep');o.innerHTML='<div class="box">Berechne Prüfsummen …</div>';
+ try{const buf=await f.arrayBuffer(),h={};for(const a of ['SHA-256','SHA-1','SHA-512'])h[a]=hex(await crypto.subtle.digest(a,buf));
+  HS=h;const head=new Uint8Array(buf.slice(0,8)),mg=MG.find(m=>m[0].every((v,i)=>head[i]===v));
+  const p=f.name.toLowerCase().split('.'),ext=p.length>1?p[p.length-1]:'',F=[];
+  if(p.length>=3&&DOCX.has(p[p.length-2])&&(EXE.has(ext)||INST.has(ext)))F.push(['crit','Doppelte Dateiendung','„'+f.name+'“ tarnt sich als Dokument, ist aber ein Programmtyp.']);
+  if(mg&&mg[2]==='exe'&&!EXE.has(ext)&&ext!=='exe'&&ext!=='dll')F.push(['crit','Getarntes Programm','Der Inhalt ist ein '+mg[1]+', die Endung „.'+(ext||'?')+'“ behauptet etwas anderes.']);
+  else if(mg&&EXP[ext]&&!EXP[ext].includes(mg[2]))F.push(['warn','Dateityp passt nicht zur Endung','Inhalt: '+mg[1]+'. Erwartet für „.'+ext+'“ wäre etwas anderes.']);
+  else F.push(['ok','Dateikopf',mg?'Erkannt als '+mg[1]+'.':'Kein bekannter Programm-Kopf, kein Hinweis auf Tarnung.']);
+  o.innerHTML=`<div class="box"><strong>${esc(f.name)}</strong><br><span style="color:var(--mu)">${fmt(f.size)}</span></div>`+F.map(x=>`<div class="f" style="--c:${SEV[x[0]].c}"><strong>${x[1]}</strong><p>${esc(x[2])}</p></div>`).join('')+`<h3>Prüfsummen</h3><div class="box">${Object.entries(h).map(([k,v])=>`<div class="hs"><div><small>${k}</small><br><code>${v}</code></div><button class="btn sec" data-c="${v}">Kopieren</button></div>`).join('')}</div>`;
+  o.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>copy(b.dataset.c,b));cmp()}
+ catch{o.innerHTML='<div class="box f" style="--c:var(--cr)"><strong>Datei nicht lesbar</strong><p>Die Datei konnte nicht verarbeitet werden, möglicherweise ist sie zu groß für den Arbeitsspeicher des Browsers.</p></div>'}
+}
+function cmp(){
+ const e=$('#exp').value.toLowerCase().replace(/^(sha-?\d+[:=\s]*)/,'').replace(/[^0-9a-f]/g,''),o=$('#cmp');
+ if(!e){o.innerHTML='';return}
+ if(!HS){o.innerHTML='<span style="color:var(--mu)">Jetzt noch die Datei auswählen, dann wird verglichen.</span>';return}
+ const hit=Object.entries(HS).find(([,v])=>v===e);
+ if(hit)o.innerHTML=`<div class="f" style="--c:var(--ok);margin:0"><strong>Hash stimmt überein (${hit[0]})</strong><p>Die Datei ist identisch mit der Version des Herstellers.</p></div>`;
+ else if(e.length===32)o.innerHTML='<div class="f" style="--c:var(--wa);margin:0"><strong>MD5 wird nicht unterstützt</strong><p>MD5 gilt als unsicher und ist im Browser nicht verfügbar. Bitte SHA-256 vom Hersteller verwenden.</p></div>';
+ else if([40,64,128].includes(e.length))o.innerHTML='<div class="f" style="--c:var(--cr);margin:0"><strong>Hash weicht ab</strong><p>Die Datei ist nicht identisch mit der Original-Datei. Sie wurde verändert oder ist beschädigt. Nicht ausführen und neu von der offiziellen Seite laden.</p></div>';
+ else o.innerHTML='<div class="f" style="--c:var(--wa);margin:0"><strong>Länge passt zu keinem Verfahren</strong><p>Erwartet werden 40 (SHA-1), 64 (SHA-256) oder 128 (SHA-512) Zeichen, eingegeben sind '+e.length+'.</p></div>'}
+$('#exp').addEventListener('input',cmp);
+const dz=$('#dz'),fi=$('#fi');
+fi.onchange=()=>fi.files[0]&&doFile(fi.files[0]);
+dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click()}});
+['dragenter','dragover'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.add('hot')}));
+['dragleave','drop'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.remove('hot')}));
+dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&doFile(e.dataTransfer.files[0]));
+</script></body></html>
